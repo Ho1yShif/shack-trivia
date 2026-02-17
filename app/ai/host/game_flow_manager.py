@@ -299,7 +299,8 @@ class GameFlowManager:
                 player_list = ", ".join(player_names[:-1]) + f", and {player_names[-1]}"
             
             # Welcome message without asking for preferences since we got them at registration
-            welcome_message = f"Welcome to Big Head! Today's contestants are {player_list}. Let's get started!"
+            contestants_verb = "is" if len(player_names) == 1 else "are"
+            welcome_message = f"Welcome to Big Head! Today's contestant{'' if len(player_names) == 1 else 's'} {contestants_verb} {player_list}. Let's get started!"
             logger.info(f"Sending welcome message: {welcome_message}")
             
             # Send welcome message
