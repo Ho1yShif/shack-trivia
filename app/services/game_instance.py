@@ -39,12 +39,19 @@ class GameInstance:
 
     DEFAULT_VOICE = "Clive"
 
+    DEFAULT_SETTINGS = {
+        "answer_timer": 12.0,
+        "auto_pick_enabled": False,
+        "auto_pick_timer": 15.0,
+    }
+
     def __init__(
         self,
         game_id: str,
         game_code: str,
         host_player_id: Optional[str] = None,
         voice: Optional[str] = None,
+        settings: Optional[Dict[str, Any]] = None,
     ):
         """
         Initialize a new game instance.
@@ -54,11 +61,13 @@ class GameInstance:
             game_code: The 6-digit game code
             host_player_id: Optional player UUID who is the host
             voice: Optional TTS voice ID for the AI host
+            settings: Optional game settings dict
         """
         self.game_id = game_id
         self.game_code = game_code
         self.host_player_id = host_player_id
         self.voice = voice or self.DEFAULT_VOICE
+        self.settings = {**self.DEFAULT_SETTINGS, **(settings or {})}
         self.status = self.STATUS_LOBBY
         self.created_at = datetime.utcnow()
 
@@ -91,6 +100,7 @@ class GameInstance:
             self._ai_host = AIHostService(
                 name=f"AI Host ({self.game_code})",
                 voice=self.voice,
+                settings=self.settings,
             )
         return self._ai_host
 

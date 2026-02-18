@@ -16,9 +16,17 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/games", tags=["games"])
 
 
+class GameSettings(BaseModel):
+    """Configurable game settings."""
+    answer_timer: float = Field(default=12.0, ge=5, le=30)
+    auto_pick_enabled: bool = False
+    auto_pick_timer: float = Field(default=15.0, ge=5, le=60)
+
+
 class CreateGameRequest(BaseModel):
     """Request body for creating a game."""
     voice: Optional[str] = None
+    settings: Optional[GameSettings] = None
 
 
 class CreateGameResponse(BaseModel):
@@ -73,9 +81,10 @@ async def create_game(request: Request, body: Optional[CreateGameRequest] = None
     """
     game_manager = request.app.state.game_manager
     voice = body.voice if body else None
+    settings = body.settings.model_dump() if body and body.settings else None
 
     try:
-        game = await game_manager.create_game(voice=voice)
+        game = await game_manager.create_game(voice=voice, settings=settings)
         return CreateGameResponse(
             game_id=game.game_id,
             code=game.game_code,

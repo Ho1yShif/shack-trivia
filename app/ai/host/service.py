@@ -31,30 +31,32 @@ class AIHostService:
     and manages the game flow without using browser automation.
     """
     
-    def __init__(self, name: str, voice: str = "Clive"):
+    def __init__(self, name: str, voice: str = "Clive", settings: dict = None):
         """
         Initialize the AI host service.
 
         Args:
             name: The name of the AI host
             voice: The TTS voice ID for speech synthesis
+            settings: Optional game settings dict (answer_timer, auto_pick_enabled, auto_pick_timer)
         """
         logger.info(f"Initializing AI Host Service with name: {name}, voice: {voice}")
         self.name = name
+        self.settings = settings or {}
 
         # Initialize API keys
         self.inworld_api_key = os.environ.get("INWORLD_API_KEY")
         self.tts_voice = voice
-        
+
         # Initialize component managers
         self.game_state_manager = GameStateManager()
         self.audio_manager = AudioManager(api_key=self.inworld_api_key, voice=self.tts_voice)
         self.answer_evaluator = AnswerEvaluator()
         self.board_manager = BoardManager()
         self.chat_processor = ChatProcessor()
-        self.buzzer_manager = BuzzerManager()
+        self.buzzer_manager = BuzzerManager(settings=self.settings)
         self.question_manager = QuestionManager()
-        self.game_flow_manager = GameFlowManager()
+        self.game_flow_manager = GameFlowManager(settings=self.settings)
         
         # Set up the chat processor
         self.chat_processor.set_host_name(name)

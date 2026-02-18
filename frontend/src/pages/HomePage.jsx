@@ -15,6 +15,9 @@ function HomePage() {
   const [joining, setJoining] = useState(false);
   const [creating, setCreating] = useState(false);
   const [voice, setVoice] = useState('Clive');
+  const [answerTimer, setAnswerTimer] = useState(12);
+  const [autoPickEnabled, setAutoPickEnabled] = useState(false);
+  const [autoPickTimer, setAutoPickTimer] = useState(15);
 
   const handleCreateGame = async (e) => {
     e.preventDefault();
@@ -32,7 +35,14 @@ function HomePage() {
       const createResponse = await fetch(getApiUrl('/api/games/create'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ voice }),
+        body: JSON.stringify({
+          voice,
+          settings: {
+            answer_timer: answerTimer,
+            auto_pick_enabled: autoPickEnabled,
+            auto_pick_timer: autoPickTimer,
+          },
+        }),
       });
 
       if (!createResponse.ok) {
@@ -146,6 +156,9 @@ function HomePage() {
     setPreferences('');
     setGameCode('');
     setVoice('Clive');
+    setAnswerTimer(12);
+    setAutoPickEnabled(false);
+    setAutoPickTimer(15);
   };
 
   return (
@@ -210,6 +223,48 @@ function HomePage() {
             </div>
 
             <VoiceSelector value={voice} onChange={setVoice} disabled={loading} />
+
+            <div className="input-group">
+              <label htmlFor="answerTimer">Answer Timer: {answerTimer}s</label>
+              <input
+                id="answerTimer"
+                type="range"
+                min={5}
+                max={30}
+                step={1}
+                value={answerTimer}
+                onChange={(e) => setAnswerTimer(Number(e.target.value))}
+                className="home-slider"
+                disabled={loading}
+              />
+            </div>
+
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={autoPickEnabled}
+                onChange={(e) => setAutoPickEnabled(e.target.checked)}
+                disabled={loading}
+              />
+              Auto-pick clue when idle
+            </label>
+
+            {autoPickEnabled && (
+              <div className="input-group">
+                <label htmlFor="autoPickTimer">Auto-pick Timer: {autoPickTimer}s</label>
+                <input
+                  id="autoPickTimer"
+                  type="range"
+                  min={5}
+                  max={60}
+                  step={1}
+                  value={autoPickTimer}
+                  onChange={(e) => setAutoPickTimer(Number(e.target.value))}
+                  className="home-slider"
+                  disabled={loading}
+                />
+              </div>
+            )}
 
             <button
               type="submit"

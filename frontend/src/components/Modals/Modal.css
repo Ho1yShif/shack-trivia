@@ -395,6 +395,14 @@
   margin-top: 20px;
 }
 
+.buzzed-in-message {
+  color: var(--color-gold);
+  font-size: 1.4em;
+  font-weight: bold;
+  margin-top: 20px;
+  animation: pulse 1.5s infinite;
+}
+
 /* Answer input styles */
 .answer-input-container {
   display: flex;

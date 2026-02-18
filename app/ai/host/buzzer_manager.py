@@ -16,22 +16,28 @@ class BuzzerManager:
     Acts as the central authority for buzzer state across the system.
     """
     
-    def __init__(self):
-        """Initialize the buzzer manager."""
+    def __init__(self, settings: dict = None):
+        """Initialize the buzzer manager.
+
+        Args:
+            settings: Optional game settings dict with answer_timer override
+        """
+        self._settings = settings or {}
+
         # Buzzer state tracking
         self.last_buzzer = None
         self.buzzer_active = False
         self.incorrect_players = set()  # Track players who answered incorrectly
         self.expecting_reactivation = False  # Flag to track if we're expecting to reactivate after audio
-        
+
         # Timeout management
         self.buzzer_timeout_task = None
         self.buzzer_timeout_seconds = 30.0 if os.environ.get("TEST_MODE") else 5.0
         self.is_timeout_active = False
 
-        # Answer timeout management
+        # Answer timeout management (configurable via settings)
         self.answer_timeout_task = None
-        self.answer_timeout_seconds = 15.0 if os.environ.get("TEST_MODE") else 7.0
+        self.answer_timeout_seconds = 15.0 if os.environ.get("TEST_MODE") else self._settings.get("answer_timer", 12.0)
         self.answer_timeout_active = False
         
         # Dependencies (to be set later)

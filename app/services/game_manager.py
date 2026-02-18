@@ -69,7 +69,7 @@ class GameManager:
 
         logger.info("GameManager stopped")
 
-    async def create_game(self, voice: Optional[str] = None) -> GameInstance:
+    async def create_game(self, voice: Optional[str] = None, settings: Optional[Dict[str, Any]] = None) -> GameInstance:
         """
         Create a new game.
 
@@ -83,7 +83,7 @@ class GameManager:
         game_code = self._generate_game_code()
 
         # Create in-memory instance
-        game = GameInstance(game_id=game_id, game_code=game_code, voice=voice)
+        game = GameInstance(game_id=game_id, game_code=game_code, voice=voice, settings=settings)
 
         # Store references
         self.active_games[game_id] = game

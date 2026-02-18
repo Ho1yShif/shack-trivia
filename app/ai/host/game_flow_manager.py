@@ -31,8 +31,14 @@ class GameFlowManager:
     Manages the game flow, state monitoring, and game progression.
     """
 
-    def __init__(self):
-        """Initialize the game flow manager."""
+    def __init__(self, settings: dict = None):
+        """Initialize the game flow manager.
+
+        Args:
+            settings: Optional game settings dict with auto_pick_enabled and auto_pick_timer overrides
+        """
+        self._settings = settings or {}
+
         # Dependencies (to be set later)
         self.game_service = None
         self.game_state_manager = None
@@ -42,6 +48,13 @@ class GameFlowManager:
         self.board_manager = None
         self.game_instance = None  # Will be set by service.py
         self.question_manager = None  # Set via set_dependencies
+
+        # Auto-pick configuration from settings
+        self.auto_pick_enabled = self._settings.get("auto_pick_enabled", False)
+        self.clue_selection_timeout = (
+            30.0 if os.environ.get("TEST_MODE")
+            else self._settings.get("auto_pick_timer", 15.0)
+        )
 
         # Timer for auto-picking a clue when controlling player is idle
         self.clue_selection_timer_start = None
@@ -445,6 +458,9 @@ class GameFlowManager:
 
         If the controlling player is idle for too long, auto-pick a random clue.
         """
+        if not self.auto_pick_enabled:
+            return
+
         if not self.game_state_manager.should_check_for_clue_selection():
             return
 
@@ -464,7 +480,7 @@ class GameFlowManager:
                 return
 
             elapsed = time.time() - self.clue_selection_timer_start
-            if elapsed < CLUE_SELECTION_TIMEOUT:
+            if elapsed < self.clue_selection_timeout:
                 return
 
             # Timeout reached — auto-pick a clue

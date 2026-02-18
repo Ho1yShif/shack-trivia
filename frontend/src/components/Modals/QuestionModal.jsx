@@ -364,6 +364,10 @@ export default function QuestionModal() {
         {lastBuzzer && lastBuzzer === playerName && answerSubmitted && (
           <p className="answer-submitted-text">Answer submitted...</p>
         )}
+
+        {lastBuzzer && lastBuzzer !== playerName && (
+          <p className="buzzed-in-message">{lastBuzzer} buzzed in!</p>
+        )}
         
         {/* Unified bottom timer bar for buzzer countdown and answer countdown */}
         {(showActiveBuzzer || (answerTimer.active && lastBuzzer)) && (
