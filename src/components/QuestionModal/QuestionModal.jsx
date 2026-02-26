@@ -2,25 +2,24 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useGame } from '@/contexts/GameContext';
 import './QuestionModal.css';
 
-const FLIP_HALF = 200;    // ms — half of reveal flip
-const EXIT_DURATION = 260; // ms — full flip-out on close
-const ENTER_DURATION = 260; // ms — card-flip-in duration
+const REVEAL_DURATION = 280; // ms — crossfade reveal
+const EXIT_DURATION = 260;   // ms — full flip-out on close
+const ENTER_DURATION = 400;  // ms — card-flip-in duration
 
 export default function QuestionModal() {
   const { state, dispatch } = useGame();
   const { currentQuestion } = state;
-  const [answerVisible, setAnswerVisible] = useState(false);
+  const [revealPhase, setRevealPhase] = useState('idle'); // 'idle' | 'revealing' | 'revealed'
   const [closing, setClosing] = useState(false);
   const [entered, setEntered] = useState(false);
-  const [flipPhase, setFlipPhase] = useState('idle'); // 'idle' | 'flipping-out'
 
   const handleDone = useCallback(() => {
-    if (closing || flipPhase !== 'idle') return;
+    if (closing || revealPhase === 'revealing') return;
     setClosing(true);
     setTimeout(() => {
       dispatch({ type: 'DISMISS_QUESTION', payload: currentQuestion.id });
     }, EXIT_DURATION);
-  }, [closing, flipPhase, currentQuestion, dispatch]);
+  }, [closing, revealPhase, currentQuestion, dispatch]);
 
   // Escape key closes the modal
   useEffect(() => {
@@ -31,27 +30,22 @@ export default function QuestionModal() {
 
   // Reset state when a new question opens
   useEffect(() => {
-    setAnswerVisible(false);
+    setRevealPhase('idle');
     setClosing(false);
     setEntered(false);
-    setFlipPhase('idle');
     const t = setTimeout(() => setEntered(true), ENTER_DURATION);
     return () => clearTimeout(t);
   }, [currentQuestion?.id]);
 
   const handleReveal = () => {
-    setFlipPhase('flipping-out');
-    setTimeout(() => {
-      setAnswerVisible(true);
-      setFlipPhase('idle');
-    }, FLIP_HALF);
+    setRevealPhase('revealing');
+    setTimeout(() => setRevealPhase('revealed'), REVEAL_DURATION);
   };
 
   if (!currentQuestion) return null;
 
   const cardClass = ['modal-card'];
   if (!entered) cardClass.push('entering');
-  else if (flipPhase === 'flipping-out') cardClass.push('flipping-out');
 
   return (
     <div
@@ -71,18 +65,18 @@ export default function QuestionModal() {
           <span className="modal-points">{currentQuestion.points}</span>
         </div>
 
-        <div className="modal-clue">{currentQuestion.clue}</div>
+        <div className="modal-clue">
+          {currentQuestion.clue}
+        </div>
 
-        <div className={`modal-answer${answerVisible ? ' modal-answer--visible' : ' modal-answer--hidden'}`}>
+        <div className={`modal-answer${revealPhase !== 'idle' ? ' modal-answer--visible' : ' modal-answer--hidden'}`}>
           {currentQuestion.answer}
         </div>
 
-        <div className="modal-actions">
-          {!answerVisible && (
-            <button className="btn-reveal" onClick={handleReveal}>
-              Reveal
-            </button>
-          )}
+        <div className={`modal-actions${revealPhase !== 'idle' ? ' fading-out' : ''}`}>
+          <button className="btn-reveal" onClick={handleReveal}>
+            Reveal
+          </button>
         </div>
       </div>
     </div>

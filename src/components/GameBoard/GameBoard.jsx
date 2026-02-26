@@ -12,13 +12,21 @@ export default function GameBoard() {
     return <div className="board-loading">Loading board…</div>;
   }
 
+  const numRows = board[categories[0]]?.length ?? 5;
+
   function handleSelect(question) {
     if (usedQuestions.has(question.id)) return;
     dispatch({ type: 'SELECT_QUESTION', payload: question });
   }
 
   return (
-    <div className="game-board" style={{ gridTemplateColumns: `repeat(${categories.length}, 1fr)` }}>
+    <div
+      className="game-board"
+      style={{
+        gridTemplateColumns: `repeat(${categories.length}, 1fr)`,
+        gridTemplateRows: `auto repeat(${numRows}, 1fr)`
+      }}
+    >
       {categories.map((cat) => (
         <div key={cat} className="category-header">
           {cat}
@@ -36,7 +44,9 @@ export default function GameBoard() {
               disabled={used}
               aria-label={used ? `${cat} ${question.points} — used` : `${cat} for ${question.points}`}
             >
-              {used ? '' : question.points}
+              {used
+                ? <img src="/wax-seal.png" className="wax-seal" alt="" aria-hidden="true" />
+                : question.points}
             </button>
           );
         })

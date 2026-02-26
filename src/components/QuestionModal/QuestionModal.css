@@ -15,17 +15,13 @@
   from { opacity: 1;   transform: perspective(900px) rotateY(0deg); }
   to   { opacity: 0.3; transform: perspective(900px) rotateY(90deg); }
 }
-@keyframes card-half-out {
-  from { transform: perspective(900px) rotateY(0deg); }
-  to   { transform: perspective(900px) rotateY(90deg); }
-}
-@keyframes card-half-in {
-  from { transform: perspective(900px) rotateY(-90deg); }
-  to   { transform: perspective(900px) rotateY(0deg); }
+@keyframes clue-out {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-10px); }
 }
 @keyframes answer-in {
-  from { opacity: 0; transform: translateY(14px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(10px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)   scale(1); }
 }
 
 /* ── Backdrop ─────────────────────────────────────────────────────────── */
@@ -67,11 +63,17 @@
 }
 
 .modal-card.entering {
-  animation: card-flip-in 0.26s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: card-flip-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-.modal-card.flipping-out {
-  animation: card-half-out 200ms ease forwards;
+.modal-clue.fading-out {
+  animation: clue-out 220ms ease forwards;
+  pointer-events: none;
+}
+
+.modal-actions.fading-out {
+  animation: clue-out 180ms ease forwards;
+  pointer-events: none;
 }
 
 .modal-backdrop.closing .modal-card {
@@ -133,7 +135,9 @@
 }
 
 .modal-answer--visible {
-  animation: answer-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: answer-in 0.26s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: 120ms;
+  opacity: 0; /* prevents flash during delay */
 }
 
 /* ── Buttons ──────────────────────────────────────────────────────────── */
@@ -183,9 +187,14 @@
   .modal-backdrop,
   .modal-backdrop.closing,
   .modal-card.entering,
-  .modal-card.flipping-out,
   .modal-backdrop.closing .modal-card,
+  .modal-clue.fading-out,
+  .modal-actions.fading-out,
   .modal-answer--visible {
     animation: none;
+  }
+
+  .modal-answer--visible {
+    opacity: 1; /* animation disabled — must be visible without it */
   }
 }
