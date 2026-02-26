@@ -4,7 +4,6 @@ import Papa from 'papaparse';
 const GameContext = createContext();
 
 const initialState = {
-  questions: [],
   board: {},
   usedQuestions: new Set(),
   currentQuestion: null,
@@ -29,7 +28,7 @@ function gameReducer(state, action) {
       });
       // Sort each category's questions by points ascending
       Object.values(board).forEach((qs) => qs.sort((a, b) => a.points - b.points));
-      return { ...state, questions: action.payload, board };
+      return { ...state, board };
     }
     case 'SELECT_QUESTION':
       return { ...state, currentQuestion: action.payload };

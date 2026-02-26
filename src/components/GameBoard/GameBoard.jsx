@@ -32,7 +32,7 @@ export default function GameBoard() {
           {cat}
         </div>
       ))}
-      {board[categories[0]].map((_, rowIndex) =>
+      {Array.from({ length: numRows }, (_, rowIndex) =>
         categories.map((cat) => {
           const question = board[cat][rowIndex];
           const used = usedQuestions.has(question.id);

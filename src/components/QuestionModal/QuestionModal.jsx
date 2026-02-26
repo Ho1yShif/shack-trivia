@@ -9,17 +9,15 @@ const ENTER_DURATION = 400;  // ms — card-flip-in duration
 export default function QuestionModal() {
   const { state, dispatch } = useGame();
   const { currentQuestion } = state;
-  const [revealPhase, setRevealPhase] = useState('idle'); // 'idle' | 'revealing' | 'revealed'
-  const [closing, setClosing] = useState(false);
-  const [entered, setEntered] = useState(false);
+  const [phase, setPhase] = useState('entering'); // 'entering' | 'idle' | 'revealing' | 'revealed' | 'closing'
 
   const handleDone = useCallback(() => {
-    if (closing || revealPhase === 'revealing') return;
-    setClosing(true);
+    if (phase === 'closing' || phase === 'revealing') return;
+    setPhase('closing');
     setTimeout(() => {
       dispatch({ type: 'DISMISS_QUESTION', payload: currentQuestion.id });
     }, EXIT_DURATION);
-  }, [closing, revealPhase, currentQuestion, dispatch]);
+  }, [phase, currentQuestion, dispatch]);
 
   // Escape key closes the modal
   useEffect(() => {
@@ -30,26 +28,24 @@ export default function QuestionModal() {
 
   // Reset state when a new question opens
   useEffect(() => {
-    setRevealPhase('idle');
-    setClosing(false);
-    setEntered(false);
-    const t = setTimeout(() => setEntered(true), ENTER_DURATION);
+    setPhase('entering');
+    const t = setTimeout(() => setPhase('idle'), ENTER_DURATION);
     return () => clearTimeout(t);
   }, [currentQuestion?.id]);
 
   const handleReveal = () => {
-    setRevealPhase('revealing');
-    setTimeout(() => setRevealPhase('revealed'), REVEAL_DURATION);
+    setPhase('revealing');
+    setTimeout(() => setPhase('revealed'), REVEAL_DURATION);
   };
 
   if (!currentQuestion) return null;
 
   const cardClass = ['modal-card'];
-  if (!entered) cardClass.push('entering');
+  if (phase === 'entering') cardClass.push('entering');
 
   return (
     <div
-      className={`modal-backdrop${closing ? ' closing' : ''}`}
+      className={`modal-backdrop${phase === 'closing' ? ' closing' : ''}`}
       onClick={handleDone}
     >
       <div
@@ -69,11 +65,11 @@ export default function QuestionModal() {
           {currentQuestion.clue}
         </div>
 
-        <div className={`modal-answer${revealPhase !== 'idle' ? ' modal-answer--visible' : ' modal-answer--hidden'}`}>
+        <div className={`modal-answer${phase === 'revealing' || phase === 'revealed' ? ' modal-answer--visible' : ' modal-answer--hidden'}`}>
           {currentQuestion.answer}
         </div>
 
-        <div className={`modal-actions${revealPhase !== 'idle' ? ' fading-out' : ''}`}>
+        <div className={`modal-actions${phase === 'revealing' || phase === 'revealed' ? ' fading-out' : ''}`}>
           <button className="btn-reveal" onClick={handleReveal}>
             Reveal
           </button>
