@@ -1,0 +1,160 @@
+/* ── Entrance / exit keyframes ───────────────────────────────────────── */
+@keyframes backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes backdrop-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+@keyframes card-in {
+  from { opacity: 0; transform: scale(0.88) translateY(24px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0); }
+}
+@keyframes card-out {
+  from { opacity: 1; transform: scale(1)    translateY(0); }
+  to   { opacity: 0; transform: scale(0.92) translateY(16px); }
+}
+@keyframes answer-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Backdrop ─────────────────────────────────────────────────────────── */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 15, 10, 0.82);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 24px;
+  animation: backdrop-in 0.2s ease forwards;
+}
+
+.modal-backdrop.closing {
+  animation: backdrop-out 0.18s ease forwards;
+}
+
+/* ── Card ─────────────────────────────────────────────────────────────── */
+.modal-card {
+  background: var(--color-paper);
+  border: 3px solid var(--color-burgundy);
+  border-radius: 3px;
+  box-shadow:
+    0 8px 40px rgba(26, 15, 10, 0.5),
+    0 2px 8px rgba(26, 15, 10, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  max-width: 720px;
+  width: 100%;
+  padding: 48px 56px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  text-align: center;
+  animation: card-in 0.26s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.modal-backdrop.closing .modal-card {
+  animation: card-out 0.18s ease forwards;
+}
+
+/* ── Header ───────────────────────────────────────────────────────────── */
+.modal-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.modal-category {
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-pencil-light);
+}
+
+.modal-points {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--color-burgundy);
+  line-height: 1;
+}
+
+/* ── Content ──────────────────────────────────────────────────────────── */
+.modal-clue {
+  font-family: 'Crimson Text', Georgia, serif;
+  font-size: clamp(1.35rem, 3vw, 1.85rem);
+  font-weight: 600;
+  color: var(--color-ink);
+  line-height: 1.5;
+}
+
+.modal-answer {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+  font-weight: 700;
+  color: var(--color-burgundy);
+  background: var(--color-paper-aged);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  padding: 14px 28px;
+  width: 100%;
+  animation: answer-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ── Buttons ──────────────────────────────────────────────────────────── */
+.btn-reveal {
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  color: var(--color-paper);
+  background: var(--color-burgundy);
+  border: none;
+  border-radius: 2px;
+  padding: 14px 40px;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.btn-reveal:hover {
+  background: var(--color-burgundy-hover);
+  transform: translateY(-1px);
+}
+
+.btn-reveal:active {
+  transform: translateY(1px);
+}
+
+.btn-done {
+  font-family: 'Crimson Text', Georgia, serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-pencil-light);
+  background: transparent;
+  border: 1px solid var(--color-border-dark);
+  border-radius: 2px;
+  padding: 10px 32px;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.btn-done:hover {
+  color: var(--color-burgundy);
+  border-color: var(--color-burgundy);
+}
+
+/* ── Reduced motion ───────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .modal-backdrop,
+  .modal-backdrop.closing,
+  .modal-card,
+  .modal-backdrop.closing .modal-card,
+  .modal-answer {
+    animation: none;
+  }
+}

@@ -1,0 +1,96 @@
+/* ShackWedding Design System */
+:root {
+  /* Brand colors */
+  --color-burgundy: #5c1017;
+  --color-burgundy-dark: #3d0a0f;
+  --color-burgundy-light: #731a22;
+  --color-burgundy-hover: #8b2a33;
+
+  /* Paper */
+  --color-paper: #f7f3e9;
+  --color-paper-aged: #e9e3d5;
+  --color-paper-vintage: #eae0cb;
+
+  /* Ink */
+  --color-ink: #1a0f0a;
+  --color-pencil: #3d2b23;
+  --color-pencil-light: #5c453a;
+
+  /* Accents */
+  --color-gold: #856404;
+  --color-gold-dark: #664c03;
+  --color-gold-light: #c9a96e;
+  --color-forest: #828e63;
+  --color-midnight: #366180;
+
+  /* UI */
+  --color-border: #d3c4b8;
+  --color-border-dark: #a89b91;
+  --color-shadow: rgba(26, 15, 10, 0.15);
+  --color-highlight: #fff3cd;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: var(--color-burgundy-dark);
+  color: var(--color-paper);
+  font-family: 'Crimson Text', Georgia, serif;
+  line-height: 1.6;
+  position: relative;
+}
+
+/* Subtle crosshatch texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  opacity: 0.03;
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 10px,
+      rgba(139, 69, 19, 0.03) 10px,
+      rgba(139, 69, 19, 0.03) 20px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 10px,
+      rgba(160, 82, 45, 0.02) 10px,
+      rgba(160, 82, 45, 0.02) 20px
+    );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Selection */
+::selection {
+  background: var(--color-highlight);
+  color: var(--color-ink);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--color-burgundy-dark); }
+::-webkit-scrollbar-thumb { background: var(--color-burgundy); border-radius: 5px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-burgundy-light); }
+
+/* Focus */
+*:focus-visible {
+  outline: 2px dashed var(--color-gold-light);
+  outline-offset: 3px;
+}
