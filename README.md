@@ -1,54 +1,47 @@
-# Big Head
+# Shack Trivia
 
-Play Big Head online with an AI host and dynamically-generated game boards. Supports multiple concurrent games via shareable game codes.
+A Jeopardy-style trivia board for live in-person events. No backend, no network — just a static SPA that reads questions from a CSV and lets the host run the game from one screen.
 
-**Stack:** FastAPI, React/Vite, WebSockets, Inworld AI (LLM + TTS)
+**Stack:** React + Vite, PapaParse, ShackWedding design system
 
-## Setup
+---
 
-```bash
-pip install -r requirements.txt
-npm install   # installs frontend deps
+## How it works
 
-cp .env.example .env   # add your INWORLD_API_KEY
-```
+- Questions are loaded from `questions.csv` at the repo root
+- The board renders a 5×6 grid (5 categories, 6 point values each)
+- Clicking a cell opens a modal with the clue
+- "Reveal Answer" toggles the answer text
+- "Done" dismisses the modal and greys out that cell permanently (for the session)
+
+---
+
+## Editing questions
+
+Open `questions.csv` and edit directly. Expected columns:
+
+| Column     | Description                        |
+|------------|------------------------------------|
+| `ID`       | Unique identifier (any string/int) |
+| `Category` | Column header on the board         |
+| `Points`   | Numeric value (e.g. 100–600)       |
+| `Question` | The clue shown to players          |
+| `Answer`   | Revealed when host clicks the button |
+
+The board groups rows by `Category` and sorts within each category by `Points` ascending. Any number of categories and point values work — just keep them consistent across categories so the grid stays rectangular.
+
+---
 
 ## Development
 
-Run the backend and frontend dev server together:
-
 ```bash
-npm run dev
+npm install && npm run dev   # starts Vite dev server on :5173
 ```
 
-Or run them separately:
-
-```bash
-npm run dev:backend   # backend with hot reload on :8000
-npm run dev:frontend  # Vite dev server on :5173
-```
-
-## Production (local)
-
-Build the frontend and serve everything from the backend:
-
-```bash
-npm run build && npm start
-```
-
-The app will be available at `http://localhost:8000`.
+---
 
 ## Deploy to Render
 
-1. Push your repo to GitHub
-2. In Render, click **New > Blueprint** and connect your repo
-3. Render auto-detects `render.yaml` and configures the service
-4. Add your `INWORLD_API_KEY` in the Render dashboard under Environment
-
-The blueprint (`render.yaml`) handles the rest: installs Python + Node deps, builds the frontend, and starts uvicorn.
-
-## Tests
-
-```bash
-cd frontend && npm run test:e2e
-```
+1. Push to GitHub
+2. In Render, click **New > Blueprint** and connect the repo
+3. Render detects `render.yaml` and deploys a static site — no env vars needed
