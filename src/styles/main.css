@@ -26,6 +26,7 @@
 .app-subtitle {
   font-family: 'Cinzel', serif;
   font-size: clamp(0.8rem, 1.5vw, 1rem);
+  font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--color-paper-aged);
