@@ -7,13 +7,21 @@
   from { opacity: 1; }
   to   { opacity: 0; }
 }
-@keyframes card-in {
-  from { opacity: 0; transform: scale(0.88) translateY(24px); }
-  to   { opacity: 1; transform: scale(1)    translateY(0); }
+@keyframes card-flip-in {
+  from { opacity: 0.3; transform: perspective(900px) rotateY(-90deg); }
+  to   { opacity: 1;   transform: perspective(900px) rotateY(0deg); }
 }
-@keyframes card-out {
-  from { opacity: 1; transform: scale(1)    translateY(0); }
-  to   { opacity: 0; transform: scale(0.92) translateY(16px); }
+@keyframes card-flip-out {
+  from { opacity: 1;   transform: perspective(900px) rotateY(0deg); }
+  to   { opacity: 0.3; transform: perspective(900px) rotateY(90deg); }
+}
+@keyframes card-half-out {
+  from { transform: perspective(900px) rotateY(0deg); }
+  to   { transform: perspective(900px) rotateY(90deg); }
+}
+@keyframes card-half-in {
+  from { transform: perspective(900px) rotateY(-90deg); }
+  to   { transform: perspective(900px) rotateY(0deg); }
 }
 @keyframes answer-in {
   from { opacity: 0; transform: translateY(14px); }
@@ -34,13 +42,15 @@
 }
 
 .modal-backdrop.closing {
-  animation: backdrop-out 0.18s ease forwards;
+  animation: backdrop-out 0.26s ease forwards;
 }
 
 /* ── Card ─────────────────────────────────────────────────────────────── */
 .modal-card {
+  position: relative;
   background: var(--color-paper);
   border: 3px solid var(--color-burgundy);
+  border-top: 3px solid var(--color-gold-light);
   border-radius: 3px;
   box-shadow:
     0 8px 40px rgba(26, 15, 10, 0.5),
@@ -48,30 +58,38 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.6);
   max-width: 720px;
   width: 100%;
-  padding: 48px 56px;
+  padding: 52px 60px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 28px;
   text-align: center;
-  animation: card-in 0.26s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.modal-card.entering {
+  animation: card-flip-in 0.26s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.modal-card.flipping-out {
+  animation: card-half-out 200ms ease forwards;
 }
 
 .modal-backdrop.closing .modal-card {
-  animation: card-out 0.18s ease forwards;
+  animation: card-flip-out 0.26s ease forwards;
 }
 
 /* ── Header ───────────────────────────────────────────────────────────── */
 .modal-header {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: 4px;
+  justify-content: space-between;
+  width: 100%;
 }
 
 .modal-category {
   font-family: 'Cinzel', serif;
-  font-size: 0.85rem;
+  font-size: 1.25rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--color-pencil-light);
@@ -83,6 +101,7 @@
   font-weight: 700;
   color: var(--color-burgundy);
   line-height: 1;
+  text-shadow: 0 0 20px rgba(201, 169, 110, 0.3);
 }
 
 /* ── Content ──────────────────────────────────────────────────────────── */
@@ -91,7 +110,7 @@
   font-size: clamp(1.35rem, 3vw, 1.85rem);
   font-weight: 600;
   color: var(--color-ink);
-  line-height: 1.5;
+  line-height: 1.65;
 }
 
 .modal-answer {
@@ -99,15 +118,31 @@
   font-size: clamp(1.2rem, 2.5vw, 1.6rem);
   font-weight: 700;
   color: var(--color-burgundy);
-  background: var(--color-paper-aged);
+  background: var(--color-paper-vintage);
   border: 1px solid var(--color-border);
+  box-shadow:
+    inset 0 2px 6px rgba(26, 15, 10, 0.08),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.5);
   border-radius: 2px;
-  padding: 14px 28px;
+  padding: 16px 32px;
   width: 100%;
+}
+
+.modal-answer--hidden {
+  visibility: hidden;
+}
+
+.modal-answer--visible {
   animation: answer-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 /* ── Buttons ──────────────────────────────────────────────────────────── */
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
 .btn-reveal {
   font-family: 'Cinzel', serif;
   font-size: 1rem;
@@ -118,43 +153,39 @@
   border-radius: 2px;
   padding: 14px 40px;
   cursor: pointer;
-  transition: background 0.15s ease, transform 0.1s ease;
+  transition: background 0.15s ease;
 }
 
 .btn-reveal:hover {
   background: var(--color-burgundy-hover);
-  transform: translateY(-1px);
 }
 
-.btn-reveal:active {
-  transform: translateY(1px);
-}
-
-.btn-done {
-  font-family: 'Crimson Text', Georgia, serif;
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--color-pencil-light);
-  background: transparent;
-  border: 1px solid var(--color-border-dark);
-  border-radius: 2px;
-  padding: 10px 32px;
+.btn-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: var(--color-burgundy-dark);
+  font-size: 1.5rem;
+  line-height: 1;
+  padding: 4px 6px;
   cursor: pointer;
-  transition: color 0.15s ease, border-color 0.15s ease;
+  transition: color 0.15s ease;
 }
 
-.btn-done:hover {
-  color: var(--color-burgundy);
-  border-color: var(--color-burgundy);
+.btn-close:hover {
+  color: var(--color-burgundy-light);
 }
 
 /* ── Reduced motion ───────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .modal-backdrop,
   .modal-backdrop.closing,
-  .modal-card,
+  .modal-card.entering,
+  .modal-card.flipping-out,
   .modal-backdrop.closing .modal-card,
-  .modal-answer {
+  .modal-answer--visible {
     animation: none;
   }
 }

@@ -28,6 +28,10 @@
   --color-border-dark: #a89b91;
   --color-shadow: rgba(26, 15, 10, 0.15);
   --color-highlight: #fff3cd;
+  --color-gold-glow: rgba(201, 169, 110, 0.35);
+
+  /* Animation */
+  --flip-duration: 220ms;
 }
 
 *,

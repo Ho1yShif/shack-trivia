@@ -30,6 +30,9 @@ const rootAssetsPlugin = {
 
 export default defineConfig({
   plugins: [react(), rootAssetsPlugin],
+  resolve: {
+    alias: { '@': path.resolve(__dirname, 'src') },
+  },
   build: {
     outDir: 'dist',
   },
